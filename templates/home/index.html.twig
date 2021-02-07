@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home | RoyalAPP{% endblock %}
+
+{% block body %}
+
+    <div class="container-fluid">
+
+        {% for message in app.flashes('error') %}
+            <div class="pace-flash-error">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('success') %}
+            <div class="pace-flash-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <div class="row">
+            <form method="post" action="{{ path('home_newpicture') }}" enctype="multipart/form-data">
+                <input type="file" name="image" multiple/>
+                <input type="submit" value="Save" class="btn btn-success"/>
+            </form>
+        </div>
+        <div class="row">
+            {% for picture in pictures %}
+                <div class="col-sm-6" style="padding: 10px">
+                    <img src="{{ asset(picture.path) }}" style="width: 100%; height: 90%"/>
+                    <div class="col-sm-12" style="margin-top: 5px">
+                        {% if picture.isActive %}
+                            <form method="post" action="{{ path('home_deletepicture', {'id':picture.id}) }}">
+                                <input type="submit" value="delete" class="btn btn-danger btn-sm" style="float: right;"/>
+                            </form>
+                        {% else %}
+                            <form method="post" action="{{ path('home_activatepicture', {'id':picture.id}) }}">
+                                <input type="submit" value="Activate" class="btn btn-success btn-sm" style="float: right;"/>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+{% endblock %}

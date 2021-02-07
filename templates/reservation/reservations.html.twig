@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reservation | RoyalAPP{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Reservation List</h3>
+                        <a href="{{ path('reservation_new') }}" class="btn btn-primary btn-sm" style="float: right">
+                            <i class="fa fa-plus"></i>
+                            Create Reservation
+                        </a>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example2" class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Name Surname</th>
+                                <th>Email</th>
+                                <th>Mobile Phone</th>
+                                <th>Description</th>
+                                <th>Reservation Date</th>
+                                <th>Register Date</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% set no = 1 %}
+                            {% for reservation in reservations %}
+                                <tr>
+                                    <td>{{ no }}</td>
+                                    <td>{{ reservation.name }}</td>
+                                    <td>{{ reservation.email }}</td>
+                                    <td>{{ reservation.mobilePhone }}</td>
+                                    <td>{{ reservation.description }}</td>
+                                    <td>{{ reservation.reservationDate|date('d-m-Y') }}</td>
+                                    <td>{{ reservation.createdAt|date('d-m-Y') }}</td>
+                                    <td>
+                                        {% if reservation.isActive %}
+                                            <a href="{{ path('reservation_delete', { 'id': reservation.id, 'date': reservation.reservationDate|date('Y-m-d') }) }}" class="btn btn-danger">Delete</a>
+                                        {% else %}
+                                            <a href="{{ path('reservation_activate', { 'id': reservation.id, 'date': reservation.reservationDate|date('Y-m-d') }) }}" class="btn btn-success">Activate</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% set no = 1 + no %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Kullanıcı | RoyalAPP{% endblock %}
+{% block title %}Reservation | RoyalAPP{% endblock %}
 
 {% block body %}
 
     <div class="container">
         <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">Kullanıcı Kaydı</h3>
+                <h3 class="card-title">Reservation Record</h3>
             </div>
             <!-- /.card-header -->
             <!-- form start -->
@@ -15,6 +15,19 @@
                 {% for error in form.vars.errors.form.getErrors(true) %}
                     <li>{{ error.message }}</li>
                 {% endfor %}
+
+                {% for message in app.flashes('error') %}
+                    <div class="pace-flash-error">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+
+                {% for message in app.flashes('success') %}
+                    <div class="pace-flash-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+
             </div>
             {{ form_start(form, {'attr': {'autocomplete': 'off', 'class': 'form-horizontal'}}) }}
             <div class="card-body">
@@ -31,13 +44,10 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    {{ form_label(form.password) }}
+                    {{ form_label(form.description) }}
                     <div class="col-sm-10">
-                        {{ form_widget(form.password) }}
+                        {{ form_widget(form.description) }}
                     </div>
-                    {# <div class="col-sm-12">
-                        {{ form_errors(form.password) }}
-                    </div> #}
                 </div>
                 <div class="form-group row">
                     {{ form_label(form.mobilePhone) }}
@@ -46,25 +56,11 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    {{ form_label(form.title) }}
+                    {{ form_label(form.reservationDate) }}
                     <div class="col-sm-10">
-                        {{ form_widget(form.title) }}
+                        {{ form_widget(form.reservationDate) }}
                     </div>
                 </div>
-                <div class="form-group row">
-                    {{ form_label(form.roles) }}
-                    <div class="col-sm-10">
-                        {{ form_widget(form.roles) }}
-                    </div>
-                </div>
-                {# <div class="form-group row">
-                    <div class="offset-sm-2 col-sm-10">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="exampleCheck2">
-                            <label class="form-check-label" for="exampleCheck2">Remember me</label>
-                        </div>
-                    </div>
-                </div> #}
             </div>
             <!-- /.card-body -->
             <div class="card-footer">

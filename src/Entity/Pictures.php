@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\PicturesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -30,7 +31,12 @@ class Pictures
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isActive;
+    private $isActive = true;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime(date('Y-m-d H:i:s'));
+    }
 
     public function getId(): ?int
     {

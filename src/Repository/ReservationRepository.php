@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Reservation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,32 +20,34 @@ class ReservationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reservation::class);
     }
 
-    // /**
-    //  * @return Reservation[] Returns an array of Reservation objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param string|int $abstractQuery
+     * @return int|mixed|string
+     */
+    public function findReservations(string $abstractQuery = AbstractQuery::HYDRATE_ARRAY)
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('r.id', 'ASC')
-            ->setMaxResults(10)
+        return $this->createQueryBuilder('p')
+            ->addSelect('admin')
+            ->leftJoin('p.admin', 'admin')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult($abstractQuery);
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Reservation
+    /**
+     * @param string $date
+     * @param string|int $abstractQuery
+     * @return int|mixed|string
+     */
+    public function findReservationsByDate(string $date, string $abstractQuery = AbstractQuery::HYDRATE_ARRAY)
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
+        return $this->createQueryBuilder('p')
+            ->addSelect('admin')
+            ->leftJoin('p.admin', 'admin')
+            ->where('p.reservationDate>=:startDate')
+            ->setParameter('startDate', $date . ' 00:00:01')
+            ->andWhere('p.reservationDate<=:endDate')
+            ->setParameter('endDate', $date . ' 23:59:59')
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult($abstractQuery);
     }
-    */
 }

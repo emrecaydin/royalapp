@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Giriş | trcCAN</title>
+    <title>Login | RoyalApp</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -20,17 +20,17 @@
 
     <p id="info" style="text-align: center; font-size: 1.2rem; {% if error %}display: block;{% else %}display: none{% endif %}">
         {% if error %}
-            <span style="color: red"> Lütfen giriş bilgilerinizi kontrol ediniz! </span>
+            <span style="color: red"> Please check your login information! </span>
         {% endif %}
     </p>
 
     <div class="login-logo">
-        <a href="{{ path('dashboard_index') }}"><b>trc</b>CAN</a>
+        <a href="{{ path('home_index') }}"><b>Royal</b>APP</a>
     </div>
     <!-- /.login-logo -->
     <div class="card">
         <div class="card-body login-card-body">
-            <p class="login-box-msg">Giriş Ekranı</p>
+            <p class="login-box-msg">Login Page</p>
             <form action="" method="post" autocomplete="off" id="loginForm">
                 <div class="input-group mb-3">
                     <input type="email" class="form-control" placeholder="Email" name="email" id="inputEmail" autocomplete="off"/>
@@ -59,17 +59,10 @@
                     </div>
                     <!-- /.col -->
                     <div class="col-4">
-                        <button type="submit" class="btn btn-primary btn-block" id="submitButton" onclick="$(this).hide();$('#loading').show()">Giriş</button>
+                        <button type="submit" class="btn btn-primary btn-block" id="submitButton" onclick="$(this).hide();$('#loading').show()">Login</button>
                         <i class="fa fa-refresh fa-spin" style="width: 100%; text-align: center; display: none" id="loading">
                             <img src="{{ asset('assets/dist/img/loading.gif') }}" style="width: 2.5rem;height: 2.5rem"/>
                         </i>
-                        <button type="button"
-                                class="btn btn-primary btn-block"
-                                id="remindButton"
-                                style="display: none"
-                                onclick="sendResetPasswordLink()">
-                            Gönder
-                        </button>
                     </div>
                     <!-- /.col -->
                 </div>
@@ -77,25 +70,6 @@
                        value="{{ csrf_token('authenticate') }}"
                 >
             </form>
-
-            {# <div class="social-auth-links text-center mb-3">
-                <p>- veya -</p>
-                <a href="#" class="btn btn-block btn-primary">
-                    <i class="fab fa-facebook mr-2"></i> Facebook ile giriş yap
-                </a>
-                <a href="#" class="btn btn-block btn-danger">
-                    <i class="fab fa-google-plus mr-2"></i> Google+ ile giriş yap
-                </a>
-            </div> #}
-            <!-- /.social-auth-links -->
-
-            <p class="mb-1">
-                <a href="#" onclick="formSetter()" id="formSetterReminderLink">Şifremi Unuttum</a>
-                <a href="#" onclick="formSetter('login')" id="formSetterLoginLink" style="display: none">Giriş Sayfası</a>
-            </p>
-            {# <p class="mb-0">
-                <a href="#" onclick="alert('Geliştirme aşamasında!')" class="text-center">Yeni Kayıt</a>
-            </p> #}
         </div>
         <!-- /.login-card-body -->
     </div>
@@ -126,7 +100,7 @@
       submitButtonSelector.hide()
       passwordInputWrapperSelector.hide()
       remindButtonSelector.show()
-      loginBoxMsgSelector.html('Şifre Hatırlatma')
+      loginBoxMsgSelector.html('Remind Password')
       formSetterReminderLinkSelector.hide()
       formSetterLoginLinkSelector.show()
     } else {

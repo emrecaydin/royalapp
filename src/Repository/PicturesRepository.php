@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Pictures;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,32 +20,14 @@ class PicturesRepository extends ServiceEntityRepository
         parent::__construct($registry, Pictures::class);
     }
 
-    // /**
-    //  * @return Pictures[] Returns an array of Pictures objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param string|int $abstractQuery
+     * @return int|mixed|string
+     */
+    public function findPictures(string $abstractQuery = AbstractQuery::HYDRATE_ARRAY)
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult($abstractQuery);
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Pictures
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

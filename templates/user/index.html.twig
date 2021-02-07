@@ -1,20 +1,52 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello UserController!{% endblock %}
+{% block title %}User | RoyalAPP{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/Users/taner/PhpstormProjects/royalapp/src/Controller/UserController.php'|file_link(0) }}">src/Controller/UserController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/Users/taner/PhpstormProjects/royalapp/templates/user/index.html.twig'|file_link(0) }}">templates/user/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">User List</h3>
+                        <a href="{{ path('user_new') }}" class="btn btn-primary btn-sm" style="float: right">
+                            <i class="fa fa-plus"></i>
+                            add new user
+                        </a>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example2" class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Name Surname</th>
+                                <th>Email</th>
+                                <th>Mobile Phone</th>
+                                <th>Title</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% set no = 1 %}
+                            {% for user in users %}
+                                <tr>
+                                    <td>{{ no }}</td>
+                                    <td>{{ user.name }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.mobilePhone }}</td>
+                                    <td>{{ user.title }}</td>
+                                    <td><a href="{{ path('user_update', { 'id': user.id }) }}" class="btn btn-success">Update</a></td>
+                                </tr>
+                                {% set no = 1 + no %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+    </div>
 {% endblock %}

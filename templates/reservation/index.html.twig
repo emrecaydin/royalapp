@@ -1,20 +1,150 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ReservationController!{% endblock %}
+{% block title %}Reservation | RoyallAPP{% endblock %}
+
+{% block stylesheet %}
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- fullCalendar -->
+
+    <link rel="stylesheet" href="{{ asset('assets/plugins/fullcalendar/main.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/fullcalendar-daygrid/main.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/fullcalendar-timegrid/main.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/fullcalendar-bootstrap/main.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.min.css') }}">
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary">
+                        <div class="card-body p-0">
+                            <!-- THE CALENDAR -->
+                            <div id="calendar"></div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/Users/taner/PhpstormProjects/royalapp/src/Controller/ReservationController.php'|file_link(0) }}">src/Controller/ReservationController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/Users/taner/PhpstormProjects/royalapp/templates/reservation/index.html.twig'|file_link(0) }}">templates/reservation/index.html.twig</a></code></li>
-    </ul>
-</div>
+{% endblock %}
+
+{% block script %}
+    {{ encore_entry_script_tags('MyAxios') }}
+    <script src="{{ asset('assets/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/fullcalendar/main.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/fullcalendar-daygrid/main.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/fullcalendar-timegrid/main.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/fullcalendar-interaction/main.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/fullcalendar-bootstrap/main.min.js') }}"></script>
+
+    <script>
+        $(function () {
+            axios.axiosGET('/reservation/reservations')
+                .then(resolve => {
+                    let data = resolve.data.data;
+
+                    let date = new Date()
+                    let d = date.getDate(),
+                        m = date.getMonth(),
+                        y = date.getFullYear()
+
+                    let month = (m + 1) > 9 ? (m + 1) : '0' + (m + 1);
+                    let day = d > 9 ? d : '0' + d;
+                    let today = y + '-' + month + '-' + day;
+
+                    let lastDay = new Date(y, m + 1, 0);
+
+                    let Calendar = FullCalendar.Calendar;
+
+                    let checkbox = document.getElementById('drop-remove');
+                    let calendarEl = document.getElementById('calendar');
+
+                    let events = [];
+
+                    for (let i = 1; i <= parseInt(lastDay.getDate()); i++) {
+
+                        let checkDateFormat = new Date(y, m, i);
+                        let dd = checkDateFormat.getDate(),
+                            mm = checkDateFormat.getMonth(),
+                            yy = checkDateFormat.getFullYear()
+                        let month = (mm + 1) > 9 ? (mm + 1) : '0' + (mm + 1);
+                        let day = dd > 9 ? dd : '0' + dd;
+                        let checkDate = yy + '-' + month + '-' + day;
+                        //console.log(checkDate, 'checkdate');
+
+                        let backgroundColor = '#20E116';
+                        let borderColor = '#20E116';
+                        let reservationCount = 0;
+                        if (data.hasOwnProperty(checkDate)) {
+                            reservationCount = data[checkDate].length;
+                        }
+                        if (reservationCount >= 10) {
+                            backgroundColor = '#f56954';
+                            borderColor = '#f56954';
+                        }
+                        let obj = {
+                            title: 'Total Reservation: ' + reservationCount,
+                            start: new Date(y, m, i),
+                            backgroundColor,
+                            borderColor,
+                            allDay: true,
+                            url: '/reservation/date/' + checkDate,
+                        }
+                        events.push(obj);
+                    }
+
+                    let calendar = new Calendar(calendarEl, {
+                        plugins: ['bootstrap', 'interaction', 'dayGrid', 'timeGrid'],
+                        header: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                        },
+                        themeSystem: 'bootstrap',
+                        events,
+                        editable: true,
+                        droppable: true, // this allows things to be dropped onto the calendar !!!
+                        drop: function (info) {
+                            // is the "remove after drop" checkbox checked?
+                            if (checkbox.checked) {
+                                // if so, remove the element from the "Draggable Events" list
+                                info.draggedEl.parentNode.removeChild(info.draggedEl);
+                            }
+                        }
+                    });
+                    calendarEl.innerHTML = '';
+                    calendar.render();
+
+                    let fcDay = $('.fc-day');
+
+                    fcDay.click(function () {
+                        let date = $(this).attr('data-date').split('-');
+                        let year = date[0],
+                            month = date[1],
+                            day = date[2];
+                        if (today > $(this).attr('data-date')) {
+                            alert('Geçmiş tarihe rezervasyon yapamazsınız!');
+                        } else {
+                            location.href = '/reservation/new?date=' + $(this).attr('data-date');
+                        }
+
+                    });
+
+
+                })
+                .catch(reject => {
+                    console.log(reject);
+                })
+        })
+    </script>
+
 {% endblock %}
