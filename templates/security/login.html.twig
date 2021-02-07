@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Giriş | trcCAN</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('assets/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="{{ asset('assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.min.css') }}">
+    {{ encore_entry_link_tags('login') }}
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+
+    <p id="info" style="text-align: center; font-size: 1.2rem; {% if error %}display: block;{% else %}display: none{% endif %}">
+        {% if error %}
+            <span style="color: red"> Lütfen giriş bilgilerinizi kontrol ediniz! </span>
+        {% endif %}
+    </p>
+
+    <div class="login-logo">
+        <a href="{{ path('dashboard_index') }}"><b>trc</b>CAN</a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="card">
+        <div class="card-body login-card-body">
+            <p class="login-box-msg">Giriş Ekranı</p>
+            <form action="" method="post" autocomplete="off" id="loginForm">
+                <div class="input-group mb-3">
+                    <input type="email" class="form-control" placeholder="Email" name="email" id="inputEmail" autocomplete="off"/>
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-envelope"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3" id="passwordInputWrapper">
+                    <input type="password" class="form-control" placeholder="Password" name="password" id="inputPassword" autocomplete="new-password"/>
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        {# <div class="icheck-primary">
+                            <input type="checkbox" id="remember">
+                            <label for="remember">
+                                Remember Me
+                            </label>
+                        </div> #}
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary btn-block" id="submitButton" onclick="$(this).hide();$('#loading').show()">Giriş</button>
+                        <i class="fa fa-refresh fa-spin" style="width: 100%; text-align: center; display: none" id="loading">
+                            <img src="{{ asset('assets/dist/img/loading.gif') }}" style="width: 2.5rem;height: 2.5rem"/>
+                        </i>
+                        <button type="button"
+                                class="btn btn-primary btn-block"
+                                id="remindButton"
+                                style="display: none"
+                                onclick="sendResetPasswordLink()">
+                            Gönder
+                        </button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <input type="hidden" name="_csrf_token"
+                       value="{{ csrf_token('authenticate') }}"
+                >
+            </form>
+
+            {# <div class="social-auth-links text-center mb-3">
+                <p>- veya -</p>
+                <a href="#" class="btn btn-block btn-primary">
+                    <i class="fab fa-facebook mr-2"></i> Facebook ile giriş yap
+                </a>
+                <a href="#" class="btn btn-block btn-danger">
+                    <i class="fab fa-google-plus mr-2"></i> Google+ ile giriş yap
+                </a>
+            </div> #}
+            <!-- /.social-auth-links -->
+
+            <p class="mb-1">
+                <a href="#" onclick="formSetter()" id="formSetterReminderLink">Şifremi Unuttum</a>
+                <a href="#" onclick="formSetter('login')" id="formSetterLoginLink" style="display: none">Giriş Sayfası</a>
+            </p>
+            {# <p class="mb-0">
+                <a href="#" onclick="alert('Geliştirme aşamasında!')" class="text-center">Yeni Kayıt</a>
+            </p> #}
+        </div>
+        <!-- /.login-card-body -->
+    </div>
+</div>
+<!-- /.login-box -->
+
+<!-- jQuery -->
+<script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<!-- AdminLTE App -->
+<script src="{{ asset('assets/dist/js/adminlte.min.js') }}"></script>
+
+{{ encore_entry_script_tags('MyAxios') }}
+
+<script>
+  let submitButtonSelector = $('#submitButton')
+  let remindButtonSelector = $('#remindButton')
+  let passwordInputWrapperSelector = $('#passwordInputWrapper')
+  let loginBoxMsgSelector = $('.login-box-msg')
+  let formSetterReminderLinkSelector = $('#formSetterReminderLink')
+  let formSetterLoginLinkSelector = $('#formSetterLoginLink')
+  let infoSelector = $('#info')
+  let loadingSelector = $('#loading')
+
+  function formSetter(type = 'reminder') {
+    if (type === 'reminder') {
+      submitButtonSelector.hide()
+      passwordInputWrapperSelector.hide()
+      remindButtonSelector.show()
+      loginBoxMsgSelector.html('Şifre Hatırlatma')
+      formSetterReminderLinkSelector.hide()
+      formSetterLoginLinkSelector.show()
+    } else {
+      submitButtonSelector.show()
+      passwordInputWrapperSelector.show()
+      remindButtonSelector.hide()
+      loginBoxMsgSelector.html('Giriş Ekranı')
+      formSetterReminderLinkSelector.show()
+      formSetterLoginLinkSelector.hide()
+    }
+
+  }
+
+  function sendResetPasswordLink() {
+    let emailSelector = $('#inputEmail')
+    if (!emailSelector.val()) {
+      emailSelector.html('Lütfen geçerli email giriniz!')
+      return false
+    }
+
+    let data = { 'email': emailSelector.val() }
+    loadingSelector.show()
+    remindButtonSelector.hide()
+    axios.axiosPOST('/remind-password', data).then(result => {
+      const { data } = result
+      //console.log(data)
+      let color = 'red'
+      if (data && data.hasOwnProperty('hasError') && !data.hasError) {
+        color = 'green'
+      }
+      infoSelector.html('<span style="color: ' + color + '">' + data.message + '</span>').show()
+      loadingSelector.hide()
+      remindButtonSelector.show()
+    }).catch(reject => {
+      infoSelector.html('<span style="color: red">İşlemler esnasında bir hata oluştu! Lütfen tekrar deneyiniz!</span>').show()
+      loadingSelector.hide()
+      remindButtonSelector.show()
+    })
+  }
+
+
+</script>
+
+</body>
+</html>
